@@ -7,6 +7,18 @@ $jarPath = Join-Path $packageInput "calculadora-cargas-eletricas.jar"
 $dist = Join-Path $root "dist"
 $javaFxLib = Join-Path $root "lib\javafx-sdk-21.0.4\lib"
 
+function Invoke-Checked {
+    param(
+        [string] $Command,
+        [string[]] $Arguments
+    )
+
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Command falhou com codigo $LASTEXITCODE."
+    }
+}
+
 & (Join-Path $root "build.ps1")
 
 if (-not (Get-Command jpackage -ErrorAction SilentlyContinue)) {
@@ -22,29 +34,36 @@ if (Test-Path $jarPath) {
     Remove-Item -LiteralPath $jarPath -Force
 }
 
-jar --create --file $jarPath --main-class Main -C $classes .
+Invoke-Checked "jar" @("--create", "--file", $jarPath, "--main-class", "Main", "-C", $classes, ".")
 
 if (Test-Path $dist) {
     Remove-Item -LiteralPath $dist -Recurse -Force
 }
 
-jpackage `
-    --type app-image `
-    --name CalculadoraCargas `
-    --app-version 1.0.0 `
-    --vendor "Projeto Universitario" `
-    --input $packageInput `
-    --main-jar "calculadora-cargas-eletricas.jar" `
-    --main-class Main `
-    --module-path $javaFxLib `
-    --add-modules javafx.controls `
-    --dest $dist
+Invoke-Checked "jpackage" @(
+    "--type", "app-image",
+    "--name", "CalculadoraCargas",
+    "--app-version", "1.0.0",
+    "--vendor", "Projeto Universitario",
+    "--input", $packageInput,
+    "--main-jar", "calculadora-cargas-eletricas.jar",
+    "--main-class", "Main",
+    "--module-path", $javaFxLib,
+    "--add-modules", "javafx.controls",
+    "--dest", $dist
+)
 
 $appFolder = Join-Path $dist "CalculadoraCargas"
 $runtimeBin = Join-Path $appFolder "runtime\bin"
 $zipPath = Join-Path $dist "CalculadoraCargas-windows.zip"
+$launcherPath = Join-Path $appFolder "Abrir CalculadoraCargas.cmd"
 
 Copy-Item -Path (Join-Path $root "lib\javafx-sdk-21.0.4\bin\*.dll") -Destination $runtimeBin -Force
+
+@"
+@echo off
+start "" "%~dp0CalculadoraCargas.exe"
+"@ | Set-Content -Path $launcherPath -Encoding ASCII
 
 if (Test-Path $zipPath) {
     Remove-Item -LiteralPath $zipPath -Force
@@ -53,4 +72,24 @@ if (Test-Path $zipPath) {
 Compress-Archive -Path $appFolder -DestinationPath $zipPath
 
 Write-Host "Executavel criado em: $appFolder\CalculadoraCargas.exe"
+Write-Host "Atalho de duplo clique criado em: $launcherPath"
 Write-Host "Pacote ZIP criado em: $zipPath"
+
+if ((Get-Command candle.exe -ErrorAction SilentlyContinue) -and (Get-Command light.exe -ErrorAction SilentlyContinue)) {
+    Invoke-Checked "jpackage" @(
+        "--type", "exe",
+        "--name", "CalculadoraCargas",
+        "--app-version", "1.0.0",
+        "--vendor", "Projeto Universitario",
+        "--app-image", $appFolder,
+        "--win-menu",
+        "--win-shortcut",
+        "--win-dir-chooser",
+        "--dest", $dist
+    )
+
+    Write-Host "Instalador Windows criado em: $dist"
+} else {
+    Write-Host "Instalador .exe nao gerado porque WiX Toolset nao foi encontrado."
+    Write-Host "A versao portatil ja esta pronta: extraia o ZIP e clique em Abrir CalculadoraCargas.cmd ou CalculadoraCargas.exe."
+}

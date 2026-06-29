@@ -158,17 +158,25 @@ O script cria uma versao executavel em:
 dist/CalculadoraCargas/CalculadoraCargas.exe
 ```
 
+Tambem cria um atalho simples de duplo clique:
+
+```text
+dist/CalculadoraCargas/Abrir CalculadoraCargas.cmd
+```
+
 Tambem cria um arquivo compactado para entrega:
 
 ```text
 dist/CalculadoraCargas-windows.zip
 ```
 
-Para abrir o programa sem IntelliJ, basta executar:
+Para abrir o programa sem IntelliJ, extraia o ZIP e clique em:
 
 ```text
-dist/CalculadoraCargas/CalculadoraCargas.exe
+Abrir CalculadoraCargas.cmd
 ```
+
+Tambem e possivel abrir diretamente `CalculadoraCargas.exe`.
 
 ## Como executar pelo IntelliJ IDEA
 

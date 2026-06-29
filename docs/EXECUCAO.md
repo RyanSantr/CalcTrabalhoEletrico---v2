@@ -32,13 +32,21 @@ O script usa `jpackage`, ferramenta incluida no JDK 21, para criar uma pasta exe
 dist/CalculadoraCargas/CalculadoraCargas.exe
 ```
 
+Dentro da mesma pasta tambem existe um launcher de duplo clique:
+
+```text
+dist/CalculadoraCargas/Abrir CalculadoraCargas.cmd
+```
+
 Tambem e criado um ZIP para entrega:
 
 ```text
 dist/CalculadoraCargas-windows.zip
 ```
 
-Para distribuir o programa, envie o arquivo ZIP inteiro. A pessoa que receber deve extrair a pasta e abrir `CalculadoraCargas.exe`.
+Para distribuir o programa, envie o arquivo ZIP inteiro. A pessoa que receber deve extrair a pasta e abrir `Abrir CalculadoraCargas.cmd` ou `CalculadoraCargas.exe`.
+
+Se o WiX Toolset estiver instalado no Windows, o script tambem tenta gerar um instalador `.exe` com atalho no menu iniciar e na area de trabalho.
 
 ## Execucao pelo IntelliJ IDEA
 
