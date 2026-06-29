@@ -167,7 +167,7 @@ public class MainView extends StackPane {
         visualTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         visualTabs.getTabs().setAll(
                 new Tab("Cena 2D", new ChargeSquarePane()),
-                new Tab("Núcleo 3D", new ChargeSquare3DPane()),
+                new Tab("Ondas 3D", new ChargeSquare3DPane()),
                 new Tab("Curva W × q", workGraphPane)
         );
 

@@ -37,7 +37,7 @@ k = 8,99 x 10^9 N.m^2/C^2
 A tela principal foi desenhada como um dashboard cientifico escuro:
 
 - painel esquerdo com entradas, botoes e resumo do modelo fisico;
-- painel central com abas para cena 2D, nucleo 3D e grafico `W x q`;
+- painel central com abas para cena 2D, ondas 3D e grafico `W x q`;
 - painel direito com conversoes, formula, substituicao e resultado final;
 - historico inferior com os calculos feitos na sessao;
 - tema futurista com cards, brilho, neon azul, vermelho para `+q` e ciano/azul para `-q`.
@@ -46,13 +46,12 @@ A tela principal foi desenhada como um dashboard cientifico escuro:
 
 ## Visualizacao 3D
 
-A aba **Nucleo 3D** usa apenas JavaFX nativo, sem bibliotecas externas. Ela inclui:
+A aba **Ondas 3D** usa apenas JavaFX nativo, sem bibliotecas externas. Ela inclui:
 
 - cargas em esferas 3D;
 - grade estilo CAD;
-- arcos de interacao entre cargas;
-- particulas animadas de fluxo;
-- nucleo energetico central;
+- ondas eletricas lineares percorrendo as ligacoes;
+- particulas animadas de fluxo em linha reta;
 - luzes coloridas;
 - rotacao automatica;
 - controle por mouse para girar e scroll para zoom.

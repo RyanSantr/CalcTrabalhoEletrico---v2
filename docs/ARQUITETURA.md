@@ -120,11 +120,9 @@ Renderiza a simulacao 3D usando JavaFX nativo:
 Elementos visuais:
 
 - quatro cargas nos vertices;
-- arcos de interacao;
-- particulas animadas;
+- ondas eletricas lineares;
+- particulas animadas em linha reta;
 - grade estilo CAD;
-- nucleo energetico central;
-- campo de estrelas;
 - controle por mouse e zoom por scroll.
 
 ## WorkGraphPane.java
