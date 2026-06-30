@@ -13,7 +13,7 @@ public class Main extends Application {
         String css = getClass().getResource("/style.css").toExternalForm();
         scene.getStylesheets().add(css);
 
-        stage.setTitle("ELECTRIC CHARGE CALCULATOR");
+        stage.setTitle("TRABALHO ELETRICO - Montagem de Cargas");
         stage.setMinWidth(1280);
         stage.setMinHeight(780);
         stage.setScene(scene);

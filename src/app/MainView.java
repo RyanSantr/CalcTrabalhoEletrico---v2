@@ -2,127 +2,106 @@ package app;
 
 import app.layout.FooterStatusBar;
 import app.layout.HeaderBar;
-import app.layout.HeroPanel;
-import app.model.ChargeCalculatorModel;
-import app.model.ChargeCalculatorModel.ChargeInput;
-import app.model.ChargeCalculatorModel.ForceResult;
-import app.panels.ConversionsPanel;
-import app.panels.CoulombLawPanel;
-import app.panels.InputParametersPanel;
-import app.panels.QuickPresetsPanel;
+import app.panels.ChargeSquarePane;
+import app.panels.FormulaPanel;
+import app.panels.InputPanel;
 import app.panels.ResultPanel;
-import app.panels.SquareConfigurationPanel;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import model.PhysicsCalculator;
 
-public class MainView extends BorderPane {
+public class MainView extends StackPane {
 
-    private final ChargeCalculatorModel calculator = new ChargeCalculatorModel();
-    private final InputParametersPanel inputPanel = new InputParametersPanel();
-    private final SquareConfigurationPanel squarePanel = new SquareConfigurationPanel();
-    private final CoulombLawPanel lawPanel = new CoulombLawPanel();
-    private final ConversionsPanel conversionsPanel = new ConversionsPanel();
+    private final PhysicsCalculator calculator = new PhysicsCalculator();
+    private final InputPanel inputPanel = new InputPanel();
+    private final ChargeSquarePane chargeSquarePane = new ChargeSquarePane();
+    private final FormulaPanel formulaPanel = new FormulaPanel();
     private final ResultPanel resultPanel = new ResultPanel();
-    private final QuickPresetsPanel presetsPanel = new QuickPresetsPanel();
     private final FooterStatusBar footer = new FooterStatusBar();
-    private ChargeInput lastInput = new ChargeInput(2E-6, -3E-6, 4.5E-6, -1.5E-6, 0.25);
 
     public MainView() {
-        getStyleClass().add("root-pane");
-        setPadding(new Insets(10));
-        setTop(new HeaderBar());
-        setCenter(createContent());
-        setBottom(footer);
+        getStyleClass().add("app-root");
+
+        BackgroundLayer background = new BackgroundLayer();
+        background.prefWidthProperty().bind(widthProperty());
+        background.prefHeightProperty().bind(heightProperty());
+
+        HeroCharacterPane hero = new HeroCharacterPane();
+        hero.prefWidthProperty().bind(widthProperty().multiply(0.33));
+        hero.prefHeightProperty().bind(heightProperty().subtract(80));
+        StackPane.setAlignment(hero, Pos.BOTTOM_LEFT);
+        StackPane.setMargin(hero, new Insets(96, 0, 0, 18));
+
+        ElectricSparksPane sparks = new ElectricSparksPane();
+        sparks.prefWidthProperty().bind(widthProperty());
+        sparks.prefHeightProperty().bind(heightProperty());
+
+        BorderPane shell = new BorderPane();
+        shell.setPadding(new Insets(18, 22, 14, 22));
+        shell.setTop(new HeaderBar());
+        shell.setCenter(createContent());
+        shell.setBottom(footer);
+
+        getChildren().addAll(background, hero, sparks, shell);
         wireActions();
-        calculate();
+        playEntrance();
     }
 
-    private HBox createContent() {
-        HeroPanel hero = new HeroPanel();
-        hero.setMinWidth(430);
-        hero.setPrefWidth(520);
-        HBox.setHgrow(hero, Priority.SOMETIMES);
+    private GridPane createContent() {
+        GridPane grid = new GridPane();
+        grid.getStyleClass().add("content-grid");
+        grid.setHgap(18);
+        grid.setVgap(18);
+        BorderPane.setMargin(grid, new Insets(18, 0, 12, 0));
 
-        GridPane dashboard = new GridPane();
-        dashboard.getStyleClass().add("dashboard-grid");
-        dashboard.setHgap(16);
-        dashboard.setVgap(16);
-        HBox.setHgrow(dashboard, Priority.ALWAYS);
+        ColumnConstraints leftSpace = new ColumnConstraints();
+        leftSpace.setPercentWidth(31);
+        ColumnConstraints middle = new ColumnConstraints();
+        middle.setPercentWidth(30);
+        ColumnConstraints right = new ColumnConstraints();
+        right.setPercentWidth(39);
+        grid.getColumnConstraints().addAll(leftSpace, middle, right);
 
-        ColumnConstraints c1 = new ColumnConstraints();
-        c1.setPercentWidth(32);
-        ColumnConstraints c2 = new ColumnConstraints();
-        c2.setPercentWidth(38);
-        ColumnConstraints c3 = new ColumnConstraints();
-        c3.setPercentWidth(30);
-        dashboard.getColumnConstraints().addAll(c1, c2, c3);
+        RowConstraints top = new RowConstraints();
+        top.setPercentHeight(58);
+        RowConstraints bottom = new RowConstraints();
+        bottom.setPercentHeight(42);
+        grid.getRowConstraints().addAll(top, bottom);
 
-        RowConstraints r1 = new RowConstraints();
-        r1.setPercentHeight(48);
-        RowConstraints r2 = new RowConstraints();
-        r2.setPercentHeight(31);
-        RowConstraints r3 = new RowConstraints();
-        r3.setPercentHeight(21);
-        dashboard.getRowConstraints().addAll(r1, r2, r3);
+        VBox leftSpacer = new VBox();
+        grid.add(leftSpacer, 0, 0, 1, 2);
+        grid.add(inputPanel, 1, 0);
+        grid.add(chargeSquarePane, 2, 0);
+        grid.add(formulaPanel, 1, 1);
+        grid.add(resultPanel, 2, 1);
 
-        VBox rightStack = new VBox(10, lawPanel, conversionsPanel, presetsPanel);
-        VBox.setVgrow(lawPanel, Priority.ALWAYS);
-        VBox.setVgrow(conversionsPanel, Priority.ALWAYS);
-        VBox.setVgrow(presetsPanel, Priority.ALWAYS);
-
-        dashboard.add(inputPanel, 0, 0);
-        dashboard.add(squarePanel, 1, 0);
-        dashboard.add(rightStack, 2, 0, 1, 3);
-        dashboard.add(resultPanel, 0, 1, 2, 2);
-
-        GridPane.setHgrow(inputPanel, Priority.ALWAYS);
-        GridPane.setHgrow(squarePanel, Priority.ALWAYS);
-        GridPane.setHgrow(resultPanel, Priority.ALWAYS);
         GridPane.setVgrow(inputPanel, Priority.ALWAYS);
-        GridPane.setVgrow(squarePanel, Priority.ALWAYS);
+        GridPane.setVgrow(chargeSquarePane, Priority.ALWAYS);
+        GridPane.setVgrow(formulaPanel, Priority.ALWAYS);
         GridPane.setVgrow(resultPanel, Priority.ALWAYS);
-
-        HBox content = new HBox(16, hero, dashboard);
-        content.getStyleClass().add("main-content");
-        return content;
+        return grid;
     }
 
     private void wireActions() {
-        inputPanel.setOnCalculate(this::calculate);
-        inputPanel.setOnReset(() -> {
-            inputPanel.setValues(2E-6, -3E-6, 4.5E-6, -1.5E-6, 0.25);
-            calculate();
+        inputPanel.setOnCalculate((chargePc, sideCm) -> {
+            var result = calculator.calculateFromUserUnits(chargePc, sideCm);
+            resultPanel.update(result);
+            footer.setStatus("CALCULO OK");
         });
-
-        presetsPanel.setOnPreset(preset -> {
-            switch (preset) {
-                case ALL_POSITIVE -> inputPanel.setValues(2E-6, 3E-6, 4.5E-6, 1.5E-6, 0.25);
-                case ALTERNATING -> inputPanel.setValues(2E-6, -3E-6, 4.5E-6, -1.5E-6, 0.25);
-                case SYMMETRIC -> inputPanel.setValues(2E-6, -2E-6, 2E-6, -2E-6, 0.25);
-                case LAST_SESSION -> inputPanel.setValues(lastInput.q1(), lastInput.q2(), lastInput.q3(), lastInput.q4(), lastInput.sideMeters());
-            }
-            calculate();
-        });
+        inputPanel.calculate();
     }
 
-    private void calculate() {
-        try {
-            ChargeInput input = inputPanel.readInput();
-            ForceResult result = calculator.calculateAtCenter(input);
-            lastInput = input;
-            squarePanel.update(input);
-            resultPanel.update(result);
-            footer.setStatus("ONLINE");
-            inputPanel.setMessage("Calculation updated. Model uses a 1 nC positive test charge at center O.");
-        } catch (IllegalArgumentException exception) {
-            footer.setStatus("INPUT ERROR");
-            inputPanel.setMessage(exception.getMessage());
-        }
+    private void playEntrance() {
+        MotionEffects.enterFromRight(inputPanel, 120);
+        MotionEffects.enterFromRight(chargeSquarePane, 230);
+        MotionEffects.enterFromRight(formulaPanel, 340);
+        MotionEffects.enterFromBottom(resultPanel, 460);
     }
 }

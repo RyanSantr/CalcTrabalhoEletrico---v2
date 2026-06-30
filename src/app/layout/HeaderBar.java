@@ -14,48 +14,35 @@ public class HeaderBar extends HBox {
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(28);
 
-        Label bolt = new Label("LIGHTNING");
-        bolt.getStyleClass().add("micro-label");
+        Label bolt = new Label("HIGH VOLTAGE");
+        bolt.getStyleClass().add("header-bolt");
 
-        Label title = new Label("ELECTRIC CHARGE CALCULATOR");
-        title.getStyleClass().add("system-name");
+        Label title = new Label("TRABALHO ELETRICO");
+        title.getStyleClass().add("header-title");
 
-        Label bars = new Label("||||||||||||");
-        bars.getStyleClass().add("blue-bars");
+        Label subtitle = new Label("Montagem de Cargas");
+        subtitle.getStyleClass().add("header-subtitle");
 
-        HBox brand = new HBox(14, bolt, title, bars);
-        brand.setAlignment(Pos.CENTER_LEFT);
+        VBox copy = new VBox(2, title, subtitle);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox nav = new HBox(42,
-                navItem("CALCULATOR", true),
-                navItem("FORMULA", false),
-                navItem("HISTORY", false),
-                navItem("THEORY", false)
+        HBox nav = new HBox(10,
+                navTab("Inicio", true),
+                navTab("Entradas", false),
+                navTab("Configuracao", false),
+                navTab("Formula", false),
+                navTab("Resultado", false)
         );
-        nav.getStyleClass().add("top-nav");
-        nav.setAlignment(Pos.CENTER_RIGHT);
+        nav.getStyleClass().add("header-nav");
 
-        getChildren().addAll(brand, spacer, nav);
+        getChildren().addAll(bolt, copy, spacer, nav);
     }
 
-    private VBox navItem(String text, boolean active) {
-        Label icon = new Label(switch (text) {
-            case "CALCULATOR" -> "++";
-            case "FORMULA" -> "[]";
-            case "HISTORY" -> "OO";
-            default -> "BK";
-        });
-        icon.getStyleClass().add("nav-icon");
-
+    private Label navTab(String text, boolean active) {
         Label label = new Label(text);
-        label.getStyleClass().add("nav-label");
-
-        VBox box = new VBox(5, icon, label);
-        box.setAlignment(Pos.CENTER);
-        box.getStyleClass().add(active ? "nav-item-active" : "nav-item");
-        return box;
+        label.getStyleClass().add(active ? "nav-tab-active" : "nav-tab");
+        return label;
     }
 }

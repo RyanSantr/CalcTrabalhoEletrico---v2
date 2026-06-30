@@ -1,91 +1,102 @@
-# ELECTRIC CHARGE CALCULATOR
+# TRABALHO ELETRICO - Montagem de Cargas
 
-Aplicacao desktop em **Java 21 + JavaFX** com foco em UI/UX premium para estudar cargas eletricas nos vertices de um quadrado.
+Aplicacao desktop em **Java 21 + JavaFX** para calcular o trabalho necessario para montar quatro cargas eletricas nos vertices de um quadrado.
 
-A versao atual foi redesenhada como um dashboard sci-fi/anime: painel branco futurista, linhas tecnicas pretas, acentos em azul eletrico, personagem cyberpunk no hero e paineis separados para entrada, configuracao, formula, conversoes, resultado e presets.
+A interface atual segue um estilo **cyberpunk/anime amarelo e preto**, com fundo tecnico, personagem animada, paineis com bordas neon, faíscas eletricas e resultado em notacao cientifica.
 
-![Dashboard premium](screenshots/electric-charge-calculator-premium.png)
+![Dashboard cyberpunk](screenshots/trabalho-eletrico-cyberpunk.png)
 
-## Funcionalidades
+## Objetivo
 
-- entrada para `q1`, `q2`, `q3`, `q4` em Coulombs;
-- entrada para o lado `a` em metros;
-- calculo da forca eletrica resultante no centro `O`;
-- resultado em notacao cientifica;
-- direcao em graus e direcao cardinal aproximada;
-- diagrama do quadrado com cargas positivas em azul e negativas em preto;
-- mini diagrama vetorial;
-- presets rapidos para diferentes configuracoes;
-- validacao de entrada com mensagem amigavel;
-- tema JavaFX completo em CSS.
+O usuario informa:
 
-## Modelo fisico usado na UI nova
+- carga `q` em picoCoulombs (`pC`);
+- lado do quadrado `a` em centimetros (`cm`).
 
-A tela premium calcula a forca resultante no centro do quadrado considerando uma carga teste positiva de `1 nC` em `O`.
-
-Para cada carga nos vertices:
+O app calcula:
 
 ```text
-F = k |q_i q_teste| / r^2
+W = U
+U = 4(-kq^2/a) + 2(kq^2/(a√2))
+U = (kq^2/a)(√2 - 4)
 ```
 
-Onde:
+Constante e conversoes:
 
 ```text
-k = 8.9875 x 10^9 N.m^2/C^2
-q_teste = 1 x 10^-9 C
-r = distancia do vertice ao centro
+k = 8,99 x 10^9 N.m^2/C^2
+1 pC = 10^-12 C
+1 cm = 10^-2 m
 ```
 
-As componentes `Fx` e `Fy` de cada carga sao somadas para obter:
+Exemplo:
 
 ```text
-Fnet = sqrt(Fx^2 + Fy^2)
-angulo = atan2(Fy, Fx)
+q = 2,30 pC
+a = 64 cm
+W = -1,92 x 10^-13 J
 ```
 
-## Estrutura principal
+## Recursos da interface
+
+- fundo `background.png` em tela cheia;
+- personagem `hero_character.png` com transparencia real;
+- faíscas eletricas animadas;
+- painel de entradas com validacao amigavel;
+- desenho JavaFX do quadrado com `Circle`, `Line` e `Text`;
+- painel de formulas e conversoes;
+- painel de resultado com interpretacao fisica;
+- botoes com hover e animacao;
+- entrada dos paineis com fade/slide.
+
+## Estrutura
 
 ```text
 src/
 |-- Main.java
 |-- app/
 |   |-- MainView.java
-|   |-- components/
-|   |   |-- TechButton.java
-|   |   |-- TechCard.java
-|   |   |-- TechTextField.java
-|   |   `-- UnitField.java
+|   |-- BackgroundLayer.java
+|   |-- HeroCharacterPane.java
+|   |-- ElectricSparksPane.java
+|   |-- MotionEffects.java
 |   |-- layout/
 |   |   |-- HeaderBar.java
-|   |   |-- HeroPanel.java
 |   |   `-- FooterStatusBar.java
-|   |-- model/
-|   |   `-- ChargeCalculatorModel.java
 |   `-- panels/
-|       |-- InputParametersPanel.java
-|       |-- SquareConfigurationPanel.java
-|       |-- CoulombLawPanel.java
-|       |-- ConversionsPanel.java
-|       |-- ResultPanel.java
-|       `-- QuickPresetsPanel.java
+|       |-- InputPanel.java
+|       |-- ChargeSquarePane.java
+|       |-- FormulaPanel.java
+|       `-- ResultPanel.java
 |-- model/
 |   `-- PhysicsCalculator.java
-|-- view/
-|   `-- componentes da versao anterior
+|-- util/
+|   `-- NumberUtils.java
 `-- resources/
     |-- style.css
     `-- assets/
-        `-- hero_character.png
+        |-- background.png
+        |-- hero_character.png
+        |-- header_bar.png
+        `-- raw/
+
+tools/
+`-- remove_fake_background.py
 ```
 
-## Como executar no Windows
+## Como executar
+
+No Windows PowerShell:
 
 ```powershell
 .\run.ps1
 ```
 
-O script compila o projeto e abre a aplicacao. Se o JavaFX SDK 21.0.4 nao existir em `lib/`, o build tenta baixa-lo automaticamente.
+Ou compile manualmente:
+
+```powershell
+.\build.ps1
+```
 
 ## Como gerar executavel Windows
 
@@ -93,11 +104,10 @@ O script compila o projeto e abre a aplicacao. Se o JavaFX SDK 21.0.4 nao existi
 .\package.ps1
 ```
 
-Saida esperada:
+Saida:
 
 ```text
 dist/CalculadoraCargas/CalculadoraCargas.exe
-dist/CalculadoraCargas/Abrir CalculadoraCargas.cmd
 dist/CalculadoraCargas-windows.zip
 ```
 
@@ -109,31 +119,22 @@ Em Linux com JDK 21:
 bash package-linux.sh
 ```
 
-Saida esperada:
+## Remover checkerboard falso dos assets
+
+O projeto inclui:
 
 ```text
-dist-linux/CalculadoraCargas/Abrir CalculadoraCargas.sh
-dist-linux/CalculadoraCargas-linux.tar.gz
+tools/remove_fake_background.py
 ```
 
-## Execucao pelo IntelliJ IDEA
+Uso:
 
-1. Abra esta pasta como projeto.
-2. Configure o SDK como Java 21.
-3. Execute a classe `Main`.
-
-Se o IntelliJ pedir parametros de VM:
-
-```text
---module-path lib/javafx-sdk-21.0.4/lib --add-modules javafx.controls
+```powershell
+python tools\remove_fake_background.py
 ```
+
+O script le imagens em `src/resources/assets/raw/`, remove fundo falso conectado às bordas e salva PNGs finais em `src/resources/assets/`.
 
 ## Observacao de build
 
-Em alguns ambientes Windows, o `javac` termina com codigo `0`, gera as classes corretamente, mas mostra um aviso `AccessDeniedException` ao fechar `javafx.controls.jar`. Neste projeto isso apareceu apos a compilacao, com `out/classes` gerado corretamente.
-
-## Documentacao
-
-- [Arquitetura](docs/ARQUITETURA.md)
-- [Explicacao do calculo original de trabalho](docs/CALCULO_EXPLICADO.md)
-- [PDF explicativo](docs/calculo-cargas-eletricas.pdf)
+Neste ambiente Windows, o `javac` gera `out/classes` corretamente, mas imprime um aviso `AccessDeniedException` ao fechar `javafx.controls.jar`. O script termina com codigo `0` e o app abre normalmente.
