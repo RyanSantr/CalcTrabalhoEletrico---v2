@@ -129,8 +129,6 @@ public class Main extends Application {
         desktop.getChildren().add(new AnimatedRetroBackground(DESIGN_W, DESIGN_H));
         desktop.getChildren().add(createTopBar());
 
-        addCharacter(desktop);
-
         inputPanel = createInputPanel();
         inputPanel.setLayoutX(38);
         inputPanel.setLayoutY(105);
@@ -146,6 +144,7 @@ public class Main extends Application {
         calculationsPanel.setLayoutY(635);
         desktop.getChildren().add(calculationsPanel);
 
+        addCharacter(desktop);
         addRightIcons(desktop);
 
         calculate();
@@ -364,9 +363,9 @@ public class Main extends Application {
     }
 
     private void addCharacter(Pane desktop) {
-        ImageView girl = imageView("/assets/garota.png", 255, -1);
-        girl.setLayoutX(40);
-        girl.setLayoutY(640);
+        ImageView girl = imageView("/assets/garota.png", 175, -1);
+        girl.setLayoutX(225);
+        girl.setLayoutY(655);
         makeSpriteClickable(girl, "Personagem", () -> {
             statusLabel.setText("Luna iniciou os calculos.");
             pulse(girl);
@@ -374,8 +373,8 @@ public class Main extends Application {
         });
 
         ImageView sparkles = imageView("/assets/brilhos.png", 85, -1);
-        sparkles.setLayoutX(28);
-        sparkles.setLayoutY(692);
+        sparkles.setLayoutX(205);
+        sparkles.setLayoutY(705);
         makeSpriteClickable(sparkles, "Brilhos", () -> {
             calculate();
             statusLabel.setText("Energia recalculada.");
