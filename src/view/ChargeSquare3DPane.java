@@ -9,6 +9,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -30,9 +32,9 @@ public class ChargeSquare3DPane extends StackPane {
     private static final double CENTER_Y = 218;
     private static final double HALF_SIDE = 108;
 
-    private static final Color POSITIVE = Color.web("#ff365f");
-    private static final Color NEGATIVE = Color.web("#2dd4ff");
-    private static final Color WAVE = Color.web("#facc15");
+    private static final Color POSITIVE = Color.web("#111111");
+    private static final Color NEGATIVE = Color.web("#6b6b6b");
+    private static final Color WAVE = Color.web("#111111");
 
     private final List<WavePulse> waves = new ArrayList<>();
     private final List<Circle> halos = new ArrayList<>();
@@ -61,17 +63,20 @@ public class ChargeSquare3DPane extends StackPane {
         IsoPoint bottomLeft = new IsoPoint(-HALF_SIDE, HALF_SIDE);
         IsoPoint bottomRight = new IsoPoint(HALF_SIDE, HALF_SIDE);
 
+        loadRayquazaArt().ifPresent(scene.getChildren()::add);
+        scene.getChildren().add(impactLines());
         scene.getChildren().addAll(platform(topLeft, topRight, bottomRight, bottomLeft));
         scene.getChildren().add(grid());
 
         Group waveLayer = new Group();
         scene.getChildren().addAll(
-                connection(topLeft, topRight, Color.web("#2dd4ff", 0.85), 4.0),
-                connection(topRight, bottomRight, Color.web("#67e8f9", 0.70), 3.0),
-                connection(bottomLeft, bottomRight, Color.web("#2dd4ff", 0.85), 4.0),
-                connection(topLeft, bottomLeft, Color.web("#67e8f9", 0.70), 3.0),
-                connection(topLeft, bottomRight, Color.web("#ff4d6d", 0.30), 1.8),
-                connection(topRight, bottomLeft, Color.web("#2dd4ff", 0.28), 1.8),
+                connection(topLeft, topRight, Color.web("#111111", 0.88), 4.0),
+                connection(topRight, bottomRight, Color.web("#111111", 0.64), 3.0),
+                connection(bottomLeft, bottomRight, Color.web("#111111", 0.88), 4.0),
+                connection(topLeft, bottomLeft, Color.web("#111111", 0.64), 3.0),
+                diagonal(topLeft, bottomRight, Color.web("#111111", 0.42)),
+                diagonal(topRight, bottomLeft, Color.web("#111111", 0.36)),
+                sideMeasure(bottomLeft, bottomRight),
                 waveLayer
         );
 
@@ -104,19 +109,58 @@ public class ChargeSquare3DPane extends StackPane {
             shadow.getPoints().addAll(projected.getX(), projected.getY() + 18);
         }
 
-        shadow.setFill(Color.web("#020617", 0.70));
-        shadow.setEffect(new DropShadow(28, Color.web("#2dd4ff", 0.14)));
+        shadow.setFill(Color.web("#111111", 0.18));
+        shadow.setEffect(new DropShadow(22, Color.web("#111111", 0.24)));
 
-        top.setFill(Color.web("#08111f", 0.72));
-        top.setStroke(Color.web("#2dd4ff", 0.28));
-        top.setStrokeWidth(1.4);
+        top.setFill(Color.web("#f5f5f5", 0.78));
+        top.setStroke(Color.web("#111111", 0.70));
+        top.setStrokeWidth(1.7);
 
         return new Group(shadow, top);
     }
 
+    private java.util.Optional<ImageView> loadRayquazaArt() {
+        var imageStream = getClass().getResourceAsStream("/assets/rayquaza-lineart.png");
+        if (imageStream == null) {
+            return java.util.Optional.empty();
+        }
+
+        ImageView art = new ImageView(new Image(imageStream));
+        art.setPreserveRatio(true);
+        art.setFitWidth(500);
+        art.setOpacity(0.18);
+        art.setRotate(-8);
+        art.setLayoutX(-52);
+        art.setLayoutY(-74);
+        art.setEffect(new DropShadow(2, Color.web("#111111", 0.18)));
+        return java.util.Optional.of(art);
+    }
+
+    private Group impactLines() {
+        Group group = new Group();
+        double[][] lines = {
+                {46, 70, 88, 103},
+                {336, 78, 294, 110},
+                {54, 305, 105, 282},
+                {333, 306, 284, 278},
+                {185, 36, 190, 84},
+                {204, 36, 200, 84}
+        };
+
+        for (double[] lineData : lines) {
+            Line line = new Line(lineData[0], lineData[1], lineData[2], lineData[3]);
+            line.setStroke(Color.web("#111111", 0.34));
+            line.setStrokeWidth(2.0);
+            line.getStrokeDashArray().addAll(10.0, 8.0);
+            group.getChildren().add(line);
+        }
+
+        return group;
+    }
+
     private Group grid() {
         Group group = new Group();
-        Color gridColor = Color.web("#67e8f9", 0.22);
+        Color gridColor = Color.web("#111111", 0.16);
 
         for (double offset = -HALF_SIDE; offset <= HALF_SIDE; offset += 36) {
             group.getChildren().add(connection(new IsoPoint(offset, -HALF_SIDE), new IsoPoint(offset, HALF_SIDE), gridColor, 0.75));
@@ -133,8 +177,36 @@ public class ChargeSquare3DPane extends StackPane {
         Line line = new Line(a.getX(), a.getY(), b.getX(), b.getY());
         line.setStroke(color);
         line.setStrokeWidth(width);
-        line.setEffect(new DropShadow(14, Color.web("#2dd4ff", 0.34)));
+        line.setEffect(new DropShadow(5, Color.web("#111111", 0.24)));
         return line;
+    }
+
+    private Line diagonal(IsoPoint start, IsoPoint end, Color color) {
+        Line line = connection(start, end, color, 1.9);
+        line.getStrokeDashArray().addAll(12.0, 8.0);
+        line.setEffect(new DropShadow(12, color));
+        return line;
+    }
+
+    private Group sideMeasure(IsoPoint start, IsoPoint end) {
+        Point2D a = project(start);
+        Point2D b = project(end);
+        Point2D middle = a.midpoint(b);
+
+        Line measure = new Line(a.getX(), a.getY() + 34, b.getX(), b.getY() + 34);
+        measure.setStroke(Color.web("#111111"));
+        measure.setStrokeWidth(2.2);
+        measure.getStrokeDashArray().addAll(8.0, 6.0);
+
+        Text label = new Text("a");
+        label.setFill(Color.web("#111111"));
+        label.setStroke(Color.WHITE);
+        label.setStrokeWidth(0.35);
+        label.setFont(Font.font("Segoe UI", FontWeight.BOLD, 20));
+        label.setX(middle.getX() - 6);
+        label.setY(middle.getY() + 54);
+
+        return new Group(measure, label);
     }
 
     private Group charge(IsoPoint base, boolean positive) {
@@ -144,35 +216,60 @@ public class ChargeSquare3DPane extends StackPane {
         double y = ground.getY() - height;
 
         Ellipse shadow = new Ellipse(x, ground.getY() + 7, 29, 8);
-        shadow.setFill(Color.web("#020617", 0.65));
+        shadow.setFill(Color.web("#111111", 0.18));
 
         Line stem = new Line(x, ground.getY(), x, y + 18);
-        stem.setStroke(Color.web("#e2e8f0", 0.32));
+        stem.setStroke(Color.web("#111111", 0.32));
         stem.setStrokeWidth(1.5);
 
         Color color = positive ? POSITIVE : NEGATIVE;
         Circle halo = new Circle(x, y, 31);
-        halo.setFill(Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.18));
-        halo.setEffect(new DropShadow(26, color));
+        halo.setFill(Color.color(color.getRed(), color.getGreen(), color.getBlue(), 0.10));
+        halo.setEffect(new DropShadow(14, Color.web("#111111", 0.30)));
 
         Circle body = new Circle(x, y, 23);
         body.setFill(radial(color));
-        body.setStroke(Color.WHITE);
-        body.setStrokeWidth(2);
-        body.setEffect(new DropShadow(18, color));
+        body.setStroke(Color.web("#111111"));
+        body.setStrokeWidth(3.2);
+        body.setEffect(new DropShadow(9, Color.web("#111111", 0.45)));
 
         Circle shine = new Circle(x - 8, y - 9, 5);
         shine.setFill(Color.web("#ffffff", 0.82));
 
         Text label = new Text(positive ? "+q" : "-q");
-        label.setFill(Color.WHITE);
+        label.setFill(positive ? Color.WHITE : Color.web("#111111"));
+        label.setStroke(positive ? Color.web("#111111") : Color.WHITE);
+        label.setStrokeWidth(0.45);
         label.setFont(Font.font("Segoe UI", FontWeight.BOLD, 18));
         label.setX(x - 12);
         label.setY(y + 6);
 
         halos.add(halo);
-        Group group = new Group(shadow, stem, halo, body, shine, label);
+        Group group = new Group(shadow, stem, halo, lightning(x, y, color), body, shine, label);
         group.setUserData(ground.getY());
+        return group;
+    }
+
+    private Group lightning(double x, double y, Color color) {
+        Group group = new Group();
+        double[][] rays = {
+                {-35, -22, -45, -31, -36, -34},
+                {30, -24, 43, -32, 37, -39},
+                {-36, 20, -50, 25, -39, 31},
+                {28, 22, 43, 29, 31, 35}
+        };
+
+        for (double[] ray : rays) {
+            Line first = new Line(x + ray[0], y + ray[1], x + ray[2], y + ray[3]);
+            Line second = new Line(x + ray[2], y + ray[3], x + ray[4], y + ray[5]);
+            for (Line line : List.of(first, second)) {
+                line.setStroke(color);
+                line.setStrokeWidth(2.4);
+                line.setEffect(new DropShadow(8, color));
+            }
+            group.getChildren().addAll(first, second);
+        }
+
         return group;
     }
 
@@ -231,7 +328,7 @@ public class ChargeSquare3DPane extends StackPane {
     }
 
     private Label createLegend() {
-        Label legend = new Label("2.5D isometrico: desenhado em 2D com ondas eletricas lineares");
+        Label legend = new Label("PAGE.06 / arena 2.5D com line-art Rayquaza e ondas eletricas");
         legend.getStyleClass().add("visual-caption");
         StackPane.setAlignment(legend, Pos.BOTTOM_CENTER);
         return legend;
@@ -257,12 +354,12 @@ public class ChargeSquare3DPane extends StackPane {
             this.speed = speed;
 
             tail = new Line();
-            tail.setStroke(Color.web("#facc15", 0.55));
+            tail.setStroke(Color.web("#111111", 0.58));
             tail.setStrokeWidth(2.2);
             tail.setEffect(new DropShadow(14, WAVE));
 
             glow = new Circle(8);
-            glow.setFill(Color.web("#facc15", 0.16));
+            glow.setFill(Color.web("#111111", 0.10));
 
             head = new Circle(4.4);
             head.setFill(WAVE);

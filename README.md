@@ -1,164 +1,99 @@
-# Electric Field Simulator
+# ELECTRIC CHARGE CALCULATOR
 
-Aplicacao desktop em **Java 21 + JavaFX** para calcular o trabalho necessario para montar quatro cargas eletricas nos vertices de um quadrado.
+Aplicacao desktop em **Java 21 + JavaFX** com foco em UI/UX premium para estudar cargas eletricas nos vertices de um quadrado.
 
-O projeto foi feito para trabalho universitario, com calculo fisico separado da interface, visual 2D, simulacao 3D interativa, grafico e pacote executavel para Windows e Linux.
+A versao atual foi redesenhada como um dashboard sci-fi/anime: painel branco futurista, linhas tecnicas pretas, acentos em azul eletrico, personagem cyberpunk no hero e paineis separados para entrada, configuracao, formula, conversoes, resultado e presets.
 
-## Objetivo
+![Dashboard premium](screenshots/electric-charge-calculator-premium.png)
 
-O usuario informa:
+## Funcionalidades
 
-- carga `q` em picoCoulombs (`pC`);
-- lado do quadrado `a` em centimetros (`cm`);
-- e recebe o trabalho `W` em Joules (`J`).
+- entrada para `q1`, `q2`, `q3`, `q4` em Coulombs;
+- entrada para o lado `a` em metros;
+- calculo da forca eletrica resultante no centro `O`;
+- resultado em notacao cientifica;
+- direcao em graus e direcao cardinal aproximada;
+- diagrama do quadrado com cargas positivas em azul e negativas em preto;
+- mini diagrama vetorial;
+- presets rapidos para diferentes configuracoes;
+- validacao de entrada com mensagem amigavel;
+- tema JavaFX completo em CSS.
 
-## Formula
+## Modelo fisico usado na UI nova
 
-O trabalho necessario para montar o sistema e igual a energia potencial eletrica total:
+A tela premium calcula a forca resultante no centro do quadrado considerando uma carga teste positiva de `1 nC` em `O`.
+
+Para cada carga nos vertices:
 
 ```text
-W = U
-
-U = 4(-kq^2/a) + 2(kq^2/(a sqrt(2)))
-
-U = (kq^2/a)(sqrt(2) - 4)
+F = k |q_i q_teste| / r^2
 ```
 
 Onde:
 
 ```text
-k = 8,99 x 10^9 N.m^2/C^2
-1 pC = 10^-12 C
-1 cm = 10^-2 m
+k = 8.9875 x 10^9 N.m^2/C^2
+q_teste = 1 x 10^-9 C
+r = distancia do vertice ao centro
 ```
 
-## Interface premium
-
-A tela principal foi desenhada como um dashboard cientifico escuro:
-
-- painel esquerdo com entradas, botoes e resumo do modelo fisico;
-- painel central com abas para cena 2D, ondas 3D e grafico `W x q`;
-- painel direito com conversoes, formula, substituicao e resultado final;
-- historico inferior com os calculos feitos na sessao;
-- tema futurista com cards, brilho, neon azul, vermelho para `+q` e ciano/azul para `-q`.
-
-![Print da aplicacao](screenshots/programa-calculadora-cargas.png)
-
-## Visualizacao 3D
-
-A aba **Ondas 3D** usa um estilo 2.5D: parece tridimensional, mas e desenhada com formas 2D do JavaFX para ficar mais limpa e controlada. Ela inclui:
-
-- cargas desenhadas como esferas 2D com brilho e sombra;
-- grade isometrica estilo CAD;
-- ondas eletricas lineares percorrendo as ligacoes;
-- particulas animadas de fluxo em linha reta;
-- luzes coloridas;
-- perspectiva desenhada em ambiente pseudo-3D.
-
-![Print da visualizacao 3D](screenshots/programa-calculadora-cargas-3d.png)
-
-## Grafico
-
-A aba de grafico mostra a variacao do trabalho em funcao da carga `q`, mantendo o valor atual de `a`.
-
-![Print do grafico](screenshots/programa-calculadora-cargas-grafico.png)
-
-## Exemplo de calculo
-
-Entrada:
+As componentes `Fx` e `Fy` de cada carga sao somadas para obter:
 
 ```text
-q = 2,30 pC
-a = 64 cm
+Fnet = sqrt(Fx^2 + Fy^2)
+angulo = atan2(Fy, Fx)
 ```
 
-Conversoes:
-
-```text
-q = 2,30 x 10^-12 C
-a = 0,64 m
-```
-
-Resultado aproximado:
-
-```text
-W = -1,92 x 10^-13 J
-```
-
-## PDF explicativo
-
-O projeto inclui um PDF com a explicacao passo a passo do problema:
-
-```text
-docs/calculo-cargas-eletricas.pdf
-```
-
-O texto fonte tambem esta em:
-
-```text
-docs/CALCULO_EXPLICADO.md
-```
-
-## Estrutura do projeto
+## Estrutura principal
 
 ```text
 src/
 |-- Main.java
+|-- app/
+|   |-- MainView.java
+|   |-- components/
+|   |   |-- TechButton.java
+|   |   |-- TechCard.java
+|   |   |-- TechTextField.java
+|   |   `-- UnitField.java
+|   |-- layout/
+|   |   |-- HeaderBar.java
+|   |   |-- HeroPanel.java
+|   |   `-- FooterStatusBar.java
+|   |-- model/
+|   |   `-- ChargeCalculatorModel.java
+|   `-- panels/
+|       |-- InputParametersPanel.java
+|       |-- SquareConfigurationPanel.java
+|       |-- CoulombLawPanel.java
+|       |-- ConversionsPanel.java
+|       |-- ResultPanel.java
+|       `-- QuickPresetsPanel.java
 |-- model/
 |   `-- PhysicsCalculator.java
 |-- view/
-|   |-- MainView.java
-|   |-- ChargeSquarePane.java
-|   |-- ChargeSquare3DPane.java
-|   |-- WorkGraphPane.java
-|   |-- ResultCard.java
-|   |-- HistoryPane.java
-|   |-- Theme.java
-|   `-- Animations.java
+|   `-- componentes da versao anterior
 `-- resources/
-    `-- style.css
+    |-- style.css
+    `-- assets/
+        `-- hero_character.png
 ```
 
-## Classes principais
-
-| Classe | Responsabilidade |
-| --- | --- |
-| `Main.java` | Inicializa o JavaFX, cria a janela, aplica o CSS e define tamanho minimo. |
-| `MainView.java` | Monta o dashboard, valida entradas, chama o calculo e atualiza os paineis. |
-| `PhysicsCalculator.java` | Faz conversoes, aplica a formula fisica e retorna o resultado completo. |
-| `ChargeSquarePane.java` | Desenha a representacao 2D com `Circle`, `Line` e `Text`. |
-| `ChargeSquare3DPane.java` | Renderiza a simulacao 2.5D isometrica com formas 2D, brilho e ondas lineares. |
-| `WorkGraphPane.java` | Gera o grafico `W x q` com `LineChart`. |
-| `ResultCard.java` | Organiza conversoes, formula, substituicao e resultado em cards. |
-| `HistoryPane.java` | Mostra e limpa o historico de simulacoes. |
-| `Theme.java` | Centraliza constantes de cor usadas no codigo Java. |
-| `Animations.java` | Centraliza animacoes simples de entrada e hover. |
-
-## Requisitos
-
-- Java JDK 21
-- Windows PowerShell para `build.ps1`, `run.ps1` e `package.ps1`
-- Linux com Bash para `package-linux.sh`
-- Opcional: IntelliJ IDEA
-- Opcional: Maven
-
 ## Como executar no Windows
-
-No PowerShell:
 
 ```powershell
 .\run.ps1
 ```
 
-O script compila e executa a classe `Main`. Se o JavaFX SDK 21.0.4 nao existir em `lib/`, o build tenta baixa-lo automaticamente.
+O script compila o projeto e abre a aplicacao. Se o JavaFX SDK 21.0.4 nao existir em `lib/`, o build tenta baixa-lo automaticamente.
 
-## Como gerar o executavel Windows
+## Como gerar executavel Windows
 
 ```powershell
 .\package.ps1
 ```
 
-O pacote gerado fica em:
+Saida esperada:
 
 ```text
 dist/CalculadoraCargas/CalculadoraCargas.exe
@@ -166,57 +101,39 @@ dist/CalculadoraCargas/Abrir CalculadoraCargas.cmd
 dist/CalculadoraCargas-windows.zip
 ```
 
-Para entregar, use o ZIP. Depois de extrair, basta clicar em `CalculadoraCargas.exe` ou `Abrir CalculadoraCargas.cmd`.
+## Como gerar app Linux
 
-## Como gerar o app Linux
-
-Em um Linux com JDK 21:
+Em Linux com JDK 21:
 
 ```bash
 bash package-linux.sh
 ```
 
-O script gera:
+Saida esperada:
 
 ```text
 dist-linux/CalculadoraCargas/Abrir CalculadoraCargas.sh
 dist-linux/CalculadoraCargas-linux.tar.gz
 ```
 
-Observacao: o pacote Linux precisa ser gerado em Linux. O Windows nao cria app Linux nativo com `jpackage`.
-
-## Como executar pelo IntelliJ IDEA
+## Execucao pelo IntelliJ IDEA
 
 1. Abra esta pasta como projeto.
-2. Configure o SDK do projeto como Java 21.
-3. Se usar Maven, aguarde a importacao do `pom.xml`.
-4. Execute a classe `Main`.
+2. Configure o SDK como Java 21.
+3. Execute a classe `Main`.
 
-Se o IntelliJ nao reconhecer o JavaFX automaticamente, use:
+Se o IntelliJ pedir parametros de VM:
 
 ```text
 --module-path lib/javafx-sdk-21.0.4/lib --add-modules javafx.controls
 ```
 
-## Validacoes implementadas
+## Observacao de build
 
-- campos obrigatorios;
-- bloqueio de valores menores ou iguais a zero;
-- suporte a decimal com virgula ou ponto;
-- mensagens de erro amigaveis;
-- resultado em notacao cientifica;
-- calculo automatico enquanto o usuario digita;
-- historico de calculos manuais;
-- interface responsiva para janela desktop.
+Em alguns ambientes Windows, o `javac` termina com codigo `0`, gera as classes corretamente, mas mostra um aviso `AccessDeniedException` ao fechar `javafx.controls.jar`. Neste projeto isso apareceu apos a compilacao, com `out/classes` gerado corretamente.
 
-## Arquivos gerados
+## Documentacao
 
-As pastas abaixo sao geradas localmente e nao devem ser versionadas:
-
-```text
-lib/
-out/
-target/
-dist/
-dist-linux/
-```
+- [Arquitetura](docs/ARQUITETURA.md)
+- [Explicacao do calculo original de trabalho](docs/CALCULO_EXPLICADO.md)
+- [PDF explicativo](docs/calculo-cargas-eletricas.pdf)

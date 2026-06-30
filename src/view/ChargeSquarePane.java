@@ -39,10 +39,10 @@ public class ChargeSquarePane extends StackPane {
         group.getChildren().addAll(
                 top, right, bottom, left,
                 sideLabel,
-                charge(START, START, "+q", Color.web("#e53935")),
-                charge(END, START, "-q", Color.web("#1e63d6")),
-                charge(START, END, "-q", Color.web("#1e63d6")),
-                charge(END, END, "+q", Color.web("#e53935"))
+                charge(START, START, "+q", Color.web("#111111"), Color.WHITE),
+                charge(END, START, "-q", Color.web("#f8f8f8"), Color.web("#111111")),
+                charge(START, END, "-q", Color.web("#f8f8f8"), Color.web("#111111")),
+                charge(END, END, "+q", Color.web("#111111"), Color.WHITE)
         );
 
         getChildren().add(group);
@@ -54,13 +54,13 @@ public class ChargeSquarePane extends StackPane {
         return line;
     }
 
-    private Group charge(double x, double y, String symbol, Color color) {
+    private Group charge(double x, double y, String symbol, Color color, Color textColor) {
         Circle circle = new Circle(x, y, RADIUS);
         circle.setFill(color);
         circle.getStyleClass().add("charge-circle");
 
         Text text = label(symbol, x, y + 6, "charge-text");
-        text.setFill(Color.WHITE);
+        text.setFill(textColor);
         text.setFont(Font.font("Segoe UI", FontWeight.BOLD, 18));
 
         return new Group(circle, text);

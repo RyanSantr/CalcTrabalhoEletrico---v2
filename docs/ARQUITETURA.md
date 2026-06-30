@@ -2,182 +2,96 @@
 
 ## Visao geral
 
-O projeto separa a regra fisica da interface grafica. Isso deixa o codigo mais facil de explicar, testar e manter.
+O projeto agora possui duas camadas visuais:
 
-Camadas principais:
+- `app/`: dashboard premium atual, usado por `Main.java`;
+- `view/`: componentes da versao anterior, mantidos como historico/evolucao do trabalho.
 
-- `Main.java`: inicializacao do JavaFX;
-- `model/`: calculo fisico;
-- `view/`: componentes visuais;
-- `resources/`: CSS do tema.
+A tela principal em uso e `app.MainView`.
 
-## Estrutura
+## Fluxo
 
 ```text
-src/
-|-- Main.java
-|-- model/
-|   `-- PhysicsCalculator.java
-|-- view/
-|   |-- MainView.java
-|   |-- ChargeSquarePane.java
-|   |-- ChargeSquare3DPane.java
-|   |-- WorkGraphPane.java
-|   |-- ResultCard.java
-|   |-- HistoryPane.java
-|   |-- Theme.java
-|   `-- Animations.java
-`-- resources/
-    `-- style.css
+Main.java
+  |
+  v
+app.MainView
+  |
+  |-- HeaderBar
+  |-- HeroPanel
+  |-- InputParametersPanel
+  |-- SquareConfigurationPanel
+  |-- CoulombLawPanel
+  |-- ConversionsPanel
+  |-- ResultPanel
+  |-- QuickPresetsPanel
+  `-- FooterStatusBar
+        |
+        v
+ChargeCalculatorModel
 ```
 
-## Fluxo de execucao
+## Pacotes
+
+### `app.components`
+
+Componentes reutilizaveis de interface:
+
+- `TechCard`: card tecnico com titulo e detalhe azul;
+- `TechButton`: botao primario/secundario no estilo do dashboard;
+- `TechTextField`: campo de texto com foco azul e estado de erro;
+- `UnitField`: linha composta por simbolo, input e unidade.
+
+### `app.layout`
+
+Estrutura fixa da tela:
+
+- `HeaderBar`: nome do sistema e tabs superiores;
+- `HeroPanel`: area visual com `hero_character.png`;
+- `FooterStatusBar`: status inferior do sistema.
+
+### `app.panels`
+
+Paineis funcionais:
+
+- `InputParametersPanel`: entrada de `q1`, `q2`, `q3`, `q4` e `a`;
+- `SquareConfigurationPanel`: desenho do quadrado com cargas;
+- `CoulombLawPanel`: formula principal;
+- `ConversionsPanel`: conversoes comuns de carga;
+- `ResultPanel`: modulo, direcao, componentes e vetor;
+- `QuickPresetsPanel`: presets de configuracao.
+
+### `app.model`
+
+`ChargeCalculatorModel` calcula a forca resultante no centro.
+
+Ele usa uma carga teste positiva de `1 nC` no centro `O`, calcula a contribuicao vetorial de cada carga nos vertices e soma as componentes:
 
 ```text
-Usuario digita q e a
-        |
-        v
-MainView valida entrada
-        |
-        v
-PhysicsCalculator converte unidades e calcula W
-        |
-        v
-MainView atualiza resultado, grafico, 2D/3D e historico
+Fx_total = Fx1 + Fx2 + Fx3 + Fx4
+Fy_total = Fy1 + Fy2 + Fy3 + Fy4
+Fnet = sqrt(Fx_total^2 + Fy_total^2)
+angulo = atan2(Fy_total, Fx_total)
 ```
 
-## Main.java
+## Recursos
 
-Responsavel por:
-
-- iniciar a aplicacao JavaFX;
-- criar a `Scene`;
-- aplicar `style.css`;
-- definir titulo, tamanho inicial e tamanho minimo;
-- exibir o `Stage`.
-
-## PhysicsCalculator.java
-
-Responsavel pela parte fisica.
-
-Metodos principais:
-
-```java
-double picoToCoulomb(double q)
-double cmToMeter(double a)
-double calculateWork(double q, double a)
-WorkResult calculateFromUserUnits(double chargePc, double sideCm)
+```text
+src/resources/style.css
+src/resources/assets/hero_character.png
 ```
 
-`calculateWork` recebe valores ja convertidos:
-
-- carga em Coulomb;
-- distancia em metro.
-
-`calculateFromUserUnits` recebe os valores digitados pelo usuario:
-
-- `q` em pC;
-- `a` em cm;
-- e retorna tambem os valores convertidos.
-
-## MainView.java
-
-Responsavel pelo dashboard principal:
-
-- painel de entradas;
-- botoes `Calcular`, `Limpar` e `Exemplo`;
-- abas de visualizacao;
-- painel de resultado;
-- historico;
-- validacao;
-- formatacao de notacao cientifica.
-
-Essa classe coordena os componentes, mas nao faz a fisica diretamente. O calculo fica no `PhysicsCalculator`.
-
-## ChargeSquarePane.java
-
-Desenha a representacao 2D:
-
-- `Line` para os lados;
-- `Circle` para cargas;
-- `Text` para `+q`, `-q` e `a`.
-
-As cargas positivas aparecem em vermelho e as negativas em azul/ciano.
-
-## ChargeSquare3DPane.java
-
-Renderiza uma simulacao 2.5D usando JavaFX nativo. A cena parece 3D, mas e desenhada com componentes 2D para manter o visual limpo.
-
-- `Pane`;
-- `Polygon`;
-- `Line`;
-- `Circle`;
-- `Ellipse`;
-- `Text`;
-- `AnimationTimer`.
-
-Elementos visuais:
-
-- quatro cargas nos vertices em perspectiva isometrica;
-- ondas eletricas lineares;
-- particulas animadas em linha reta;
-- grade estilo CAD;
-- brilho, sombras e profundidade desenhada.
-
-## WorkGraphPane.java
-
-Mostra o grafico `W x q`.
-
-O grafico calcula varios pontos usando a mesma regra do `PhysicsCalculator`, o que evita duplicar formula em outro lugar do projeto.
-
-## ResultCard.java
-
-Organiza a explicacao do resultado em cards:
-
-- conversoes;
-- formula;
-- substituicao dos valores;
-- resultado final em destaque.
-
-## HistoryPane.java
-
-Mantem uma lista visual dos calculos feitos manualmente. Cada item mostra:
-
-- horario;
-- carga `q`;
-- lado `a`;
-- trabalho `W`.
-
-## Theme.java
-
-Centraliza cores usadas no codigo Java quando a cor precisa ser aplicada diretamente no componente.
-
-## Animations.java
-
-Centraliza animacoes simples:
-
-- entrada com fade;
-- entrada com deslocamento;
-- efeito de hover nos botoes.
-
-## style.css
-
-Define o tema visual:
-
-- fundo escuro;
-- paineis estilo vidro;
-- botoes com gradiente;
-- campos com brilho ao focar;
-- cards de resultado;
-- tabs;
-- grafico;
-- historico.
+O `style.css` define a identidade sci-fi/anime: fundo branco frio, bordas pretas finas, cards tecnicos, azul eletrico, inputs, botoes, tabs e tipografia forte.
 
 ## Scripts
 
 | Arquivo | Funcao |
 | --- | --- |
-| `build.ps1` | Baixa JavaFX se necessario e compila o projeto. |
+| `build.ps1` | Baixa JavaFX se necessario, compila e copia todos os recursos. |
 | `run.ps1` | Compila e executa a aplicacao. |
-| `package.ps1` | Gera executavel Windows com `jpackage` e cria ZIP. |
-| `package-linux.sh` | Gera pacote Linux e cria `.tar.gz`. |
+| `package.ps1` | Gera executavel Windows com `jpackage`. |
+| `package-linux.sh` | Gera pacote Linux. |
+
+## Observacao
+
+`model/PhysicsCalculator.java` permanece no projeto porque pertence ao problema original de trabalho/energia potencial. A UI nova usa `app.model.ChargeCalculatorModel` para a calculadora visual de forca no centro.

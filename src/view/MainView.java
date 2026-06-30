@@ -43,7 +43,7 @@ public class MainView extends StackPane {
     public MainView() {
         getStyleClass().add("root-pane");
 
-        VBox shell = new VBox(22, createHeader(), createDashboard(), historyPane);
+        VBox shell = new VBox(16, createHeader(), createDashboard(), historyPane, createFooter());
         shell.getStyleClass().add("app-shell");
         shell.setFillWidth(true);
 
@@ -59,10 +59,10 @@ public class MainView extends StackPane {
     }
 
     private HBox createHeader() {
-        Label title = new Label("⚡ ELECTRIC FIELD SIMULATOR");
+        Label title = new Label("TRABALHO PARA MONTAGEM DE CARGAS");
         title.getStyleClass().add("app-title");
 
-        Label subtitle = new Label("Physics Engine • JavaFX • Java 21");
+        Label subtitle = new Label("Arena experimental de cargas • JavaFX • energia potencial eletrica");
         subtitle.getStyleClass().add("app-subtitle");
 
         VBox titleBox = new VBox(4, title, subtitle);
@@ -70,7 +70,7 @@ public class MainView extends StackPane {
         statusLabel.getStyleClass().add("system-status");
 
         HBox header = new HBox(24, titleBox, statusLabel);
-        header.getStyleClass().add("header-card");
+        header.getStyleClass().addAll("header-card", "anime-header");
         header.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(titleBox, Priority.ALWAYS);
 
@@ -107,42 +107,41 @@ public class MainView extends StackPane {
     }
 
     private VBox createInputPanel() {
-        Label title = new Label("Entradas");
+        Label title = new Label("ENTRADA DE DADOS");
         title.getStyleClass().add("panel-title");
 
-        chargeField.setPromptText("⚡ Carga elétrica (pC)");
+        chargeField.setPromptText("q = ______ pC");
         chargeField.getStyleClass().add("input-field");
 
-        sideField.setPromptText("📏 Distância (cm)");
+        sideField.setPromptText("a = ______ cm");
         sideField.getStyleClass().add("input-field");
 
-        Button calculateButton = button("Calcular", "primary-button");
+        Button calculateButton = button("CALCULAR ⚡", "primary-button");
         calculateButton.setOnAction(event -> calculate(true, true));
 
-        Button clearButton = button("Limpar", "danger-button");
+        Button clearButton = button("LIMPAR ✕", "danger-button");
         clearButton.setOnAction(event -> clear());
 
-        Button exampleButton = button("Exemplo", "secondary-button");
+        Button exampleButton = button("EXEMPLO", "secondary-button");
         exampleButton.setOnAction(event -> loadExample());
 
-        HBox buttons = new HBox(10, calculateButton, clearButton, exampleButton);
+        HBox buttons = new HBox(10, calculateButton, clearButton);
         buttons.setAlignment(Pos.CENTER);
         HBox.setHgrow(calculateButton, Priority.ALWAYS);
         HBox.setHgrow(clearButton, Priority.ALWAYS);
-        HBox.setHgrow(exampleButton, Priority.ALWAYS);
 
         helperLabel.getStyleClass().add("helper-label");
         helperLabel.setWrapText(true);
 
-        VBox panel = new VBox(16, title, chargeField, sideField, buttons, helperLabel, createFormulaSummary());
-        panel.getStyleClass().add("glass-card");
+        VBox panel = new VBox(16, title, chargeField, sideField, buttons, exampleButton, helperLabel, createFormulaSummary());
+        panel.getStyleClass().addAll("glass-card", "paper-panel", "manga-card");
         panel.setMinHeight(520);
         Animations.installHoverScale(panel);
         return panel;
     }
 
     private VBox createFormulaSummary() {
-        Label title = new Label("Modelo físico");
+        Label title = new Label("ENERGY MODEL");
         title.getStyleClass().add("mini-title");
 
         Label formula = new Label("U = (kq²/a)(√2 − 4)");
@@ -157,10 +156,10 @@ public class MainView extends StackPane {
     }
 
     private VBox createSimulationPanel() {
-        Label title = new Label("Simulação 2D/3D");
+        Label title = new Label("ARENA DAS CARGAS");
         title.getStyleClass().add("panel-title");
 
-        Label subtitle = new Label("Cargas alternadas nos vértices do quadrado");
+        Label subtitle = new Label("+q e -q nos vertices do quadrado energetico");
         subtitle.getStyleClass().add("muted-text");
 
         visualTabs.getStyleClass().add("visual-tabs");
@@ -172,7 +171,7 @@ public class MainView extends StackPane {
         );
 
         VBox panel = new VBox(14, title, subtitle, visualTabs);
-        panel.getStyleClass().add("glass-card");
+        panel.getStyleClass().addAll("glass-card", "arena-panel", "manga-card");
         panel.setAlignment(Pos.CENTER);
         VBox.setVgrow(visualTabs, Priority.ALWAYS);
         Animations.installHoverScale(panel);
@@ -180,14 +179,29 @@ public class MainView extends StackPane {
     }
 
     private VBox createResultPanel() {
-        Label title = new Label("Resultado");
+        Label title = new Label("FORMULA DO TRABALHO");
         title.getStyleClass().add("panel-title");
 
         VBox panel = new VBox(14, title, resultCard);
-        panel.getStyleClass().add("glass-card");
+        panel.getStyleClass().addAll("glass-card", "result-panel", "manga-card");
         VBox.setVgrow(resultCard, Priority.ALWAYS);
         Animations.installHoverScale(panel);
         return panel;
+    }
+
+    private HBox createFooter() {
+        Label icon = new Label("⚡");
+        icon.getStyleClass().add("footer-icon");
+
+        Label text = new Label("O trabalho necessario para montar o sistema e igual a energia potencial eletrica total.");
+        text.getStyleClass().add("footer-note-text");
+        text.setWrapText(true);
+
+        HBox footer = new HBox(12, icon, text);
+        footer.getStyleClass().add("footer-note");
+        footer.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        return footer;
     }
 
     private Button button(String text, String styleClass) {
