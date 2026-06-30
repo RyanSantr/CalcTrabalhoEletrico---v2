@@ -24,7 +24,7 @@
     -fx-border-width: 2px;
     -fx-background-radius: 0;
     -fx-border-radius: 0;
-    -fx-padding: 14px 22px;
+    -fx-padding: 12px 18px;
     -fx-effect: dropshadow(gaussian, rgba(255, 216, 0, 0.22), 16, 0, 0, 0);
 }
 
@@ -33,18 +33,18 @@
     -fx-text-fill: #08090b;
     -fx-font-size: 14px;
     -fx-font-weight: 900;
-    -fx-padding: 12px 18px;
+    -fx-padding: 10px 14px;
 }
 
 .header-title {
     -fx-text-fill: #f5f5f5;
-    -fx-font-size: 28px;
+    -fx-font-size: 24px;
     -fx-font-weight: 900;
 }
 
 .header-subtitle {
     -fx-text-fill: #ffd800;
-    -fx-font-size: 15px;
+    -fx-font-size: 14px;
     -fx-font-weight: 700;
 }
 
@@ -57,9 +57,9 @@
     -fx-background-color: rgba(17, 18, 22, 0.9);
     -fx-border-color: rgba(255, 255, 255, 0.18);
     -fx-border-width: 1px;
-    -fx-font-size: 14px;
+    -fx-font-size: 13px;
     -fx-font-weight: 800;
-    -fx-padding: 13px 18px;
+    -fx-padding: 11px 14px;
     -fx-text-fill: #f5f5f5;
 }
 
@@ -72,6 +72,25 @@
 
 .content-grid {
     -fx-min-height: 650px;
+}
+
+.content-scroll,
+.content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.content-scroll {
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+
+.content-scroll .scroll-bar:vertical {
+    -fx-background-color: rgba(8, 9, 11, 0.55);
+}
+
+.content-scroll .thumb {
+    -fx-background-color: rgba(255, 216, 0, 0.72);
+    -fx-background-radius: 0;
 }
 
 .hero-character-pane {
@@ -94,6 +113,7 @@
     -fx-effect:
         dropshadow(gaussian, rgba(0, 0, 0, 0.52), 22, 0, 0, 12),
         dropshadow(gaussian, rgba(255, 216, 0, 0.18), 12, 0, 0, 0);
+    -fx-min-width: 0;
 }
 
 .cyber-card-title {
@@ -126,6 +146,7 @@
     -fx-font-weight: 800;
     -fx-padding: 12px 16px;
     -fx-prompt-text-fill: #777777;
+    -fx-min-width: 0;
 }
 
 .input-field:focused {
@@ -195,6 +216,7 @@
     -fx-border-color: #111216;
     -fx-border-width: 3px;
     -fx-min-height: 270px;
+    -fx-pref-height: 310px;
 }
 
 .square-line-cyber {

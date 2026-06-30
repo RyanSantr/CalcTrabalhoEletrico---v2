@@ -11,6 +11,7 @@ public class FormulaPanel extends VBox {
 
         Label title = new Label("03. FORMULA E CONVERSOES");
         title.getStyleClass().add("cyber-card-title");
+        title.setWrapText(true);
 
         Label formulas = new Label("""
                 W = U
@@ -18,15 +19,18 @@ public class FormulaPanel extends VBox {
                 U = (kq^2/a)(√2 - 4)
                 """);
         formulas.getStyleClass().add("formula-text");
+        formulas.setWrapText(true);
 
         Label conversions = new Label("""
                 1 pC = 10^-12 C
                 1 cm = 10^-2 m
                 """);
         conversions.getStyleClass().add("conversion-text");
+        conversions.setWrapText(true);
 
         Label note = new Label("Use q em picoCoulombs e a em centimetros.");
         note.getStyleClass().add("result-note");
+        note.setWrapText(true);
 
         getChildren().addAll(title, formulas, conversions, note);
     }

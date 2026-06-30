@@ -42,6 +42,15 @@ ResultPanel mostra W e interpretacao
 | `PhysicsCalculator` | Faz conversoes e aplica `U = (kq^2/a)(√2 - 4)`. |
 | `NumberUtils` | Aceita virgula/ponto e formata numeros. |
 
+## Responsividade
+
+`app.MainView` alterna o layout conforme a largura da janela:
+
+- a partir de larguras desktop, mantem a composicao com personagem a esquerda e paineis em duas colunas;
+- abaixo de aproximadamente `1180px`, os paineis sao reorganizados em uma coluna dentro de um `ScrollPane`;
+- o personagem vira elemento visual de fundo com menor opacidade para nao cobrir os cards;
+- o header usa `FlowPane` para quebrar as abas quando nao houver largura suficiente.
+
 ## Assets
 
 ```text

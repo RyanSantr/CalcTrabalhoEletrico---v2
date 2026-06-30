@@ -6,6 +6,10 @@ A interface atual segue um estilo **cyberpunk/anime amarelo e preto**, com fundo
 
 ![Dashboard cyberpunk](screenshots/trabalho-eletrico-cyberpunk.png)
 
+Versao responsiva em janela menor:
+
+![Dashboard responsivo](screenshots/trabalho-eletrico-responsive.png)
+
 ## Objetivo
 
 O usuario informa:
@@ -47,7 +51,8 @@ W = -1,92 x 10^-13 J
 - painel de formulas e conversoes;
 - painel de resultado com interpretacao fisica;
 - botoes com hover e animacao;
-- entrada dos paineis com fade/slide.
+- entrada dos paineis com fade/slide;
+- layout responsivo: em telas largas usa cards em duas colunas; em telas menores empilha os paineis em uma coluna com scroll.
 
 ## Estrutura
 

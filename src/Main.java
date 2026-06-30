@@ -14,8 +14,8 @@ public class Main extends Application {
         scene.getStylesheets().add(css);
 
         stage.setTitle("TRABALHO ELETRICO - Montagem de Cargas");
-        stage.setMinWidth(1280);
-        stage.setMinHeight(780);
+        stage.setMinWidth(940);
+        stage.setMinHeight(640);
         stage.setScene(scene);
         stage.show();
     }

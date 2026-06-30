@@ -19,10 +19,14 @@ public class ResultPanel extends VBox {
 
         Label title = new Label("04. RESULTADO");
         title.getStyleClass().add("cyber-card-title");
+        title.setWrapText(true);
 
         resultNumber.getStyleClass().add("result-number");
         values.getStyleClass().add("result-values");
         note.getStyleClass().add("result-note");
+        resultNumber.setWrapText(true);
+        values.setWrapText(true);
+        note.setWrapText(true);
 
         HBox chips = new HBox(16, values);
         chips.getStyleClass().add("result-chip-row");

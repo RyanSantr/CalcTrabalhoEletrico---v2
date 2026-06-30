@@ -2,6 +2,7 @@ package app.panels;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -22,6 +23,7 @@ public class ChargeSquarePane extends VBox {
         Label subtitle = new Label("Quatro cargas nos vertices de um quadrado");
         subtitle.getStyleClass().add("cyber-subtitle");
 
+        VBox.setVgrow(drawing, Priority.ALWAYS);
         getChildren().addAll(title, subtitle, drawing, legend());
     }
 

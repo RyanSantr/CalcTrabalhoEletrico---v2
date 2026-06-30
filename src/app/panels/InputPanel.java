@@ -28,6 +28,7 @@ public class InputPanel extends VBox {
 
         Label subtitle = new Label("Digite os valores do exercicio");
         subtitle.getStyleClass().add("cyber-subtitle");
+        subtitle.setWrapText(true);
 
         GridPane fields = new GridPane();
         fields.setHgap(12);
@@ -39,6 +40,7 @@ public class InputPanel extends VBox {
 
         Label helper = new Label("Aceita virgula ou ponto");
         helper.getStyleClass().add("helper-line");
+        helper.setWrapText(true);
 
         Button calculate = new Button("CALCULAR  >>");
         calculate.getStyleClass().addAll("primary-button", "motion-button");
