@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>br.com.calculadora</groupId>
-    <artifactId>calculadora-cargas-eletricas</artifactId>
+    <groupId>br.com.ryan</groupId>
+    <artifactId>trabalho-eletrico-retro-javafx</artifactId>
     <version>1.0.0</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>21.0.4</javafx.version>
     </properties>
 
@@ -24,27 +24,18 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>src/resources</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
-                <configuration>
-                    <release>21</release>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>Main</mainClass>
+                    <mainClass>br.com.ryan.trabalhoeletrico.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

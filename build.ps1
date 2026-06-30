@@ -21,9 +21,9 @@ New-Item -ItemType Directory -Force -Path $classes | Out-Null
 
 $jars = Get-ChildItem -Path $javaFxLib -Filter *.jar | ForEach-Object { $_.FullName }
 $classpath = [string]::Join(";", $jars)
-$sources = Get-ChildItem -Path (Join-Path $root "src") -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+$sources = Get-ChildItem -Path (Join-Path $root "src\main\java") -Recurse -Filter *.java | ForEach-Object { $_.FullName }
 
 javac -encoding UTF-8 -cp $classpath -d $classes $sources
-Copy-Item -Path (Join-Path $root "src\resources\*") -Destination $classes -Recurse -Force
+Copy-Item -Path (Join-Path $root "src\main\resources\*") -Destination $classes -Recurse -Force
 
 Write-Host "Build concluído em $classes"

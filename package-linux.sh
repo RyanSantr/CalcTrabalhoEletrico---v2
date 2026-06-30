@@ -9,10 +9,10 @@ JAVAFX_ZIP="$ROOT/lib-linux/openjfx-${JAVAFX_VERSION}_linux-x64_bin-sdk.zip"
 JAVAFX_URL="https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_linux-x64_bin-sdk.zip"
 CLASSES="$ROOT/out-linux/classes"
 PACKAGE_INPUT="$ROOT/out-linux/package"
-JAR_PATH="$PACKAGE_INPUT/calculadora-cargas-eletricas.jar"
+JAR_PATH="$PACKAGE_INPUT/calculadora-trabalho-eletrico.jar"
 DIST="$ROOT/dist-linux"
-APP_FOLDER="$DIST/CalculadoraCargas"
-TAR_PATH="$DIST/CalculadoraCargas-linux.tar.gz"
+APP_FOLDER="$DIST/CalculadoraTrabalhoEletrico"
+TAR_PATH="$DIST/CalculadoraTrabalhoEletrico-linux.tar.gz"
 
 require_command() {
     if ! command -v "$1" >/dev/null 2>&1; then
@@ -40,21 +40,21 @@ fi
 rm -rf "$ROOT/out-linux" "$DIST"
 mkdir -p "$CLASSES" "$PACKAGE_INPUT" "$DIST"
 
-mapfile -d '' SOURCES < <(find "$ROOT/src" -name "*.java" -print0)
+mapfile -d '' SOURCES < <(find "$ROOT/src/main/java" -name "*.java" -print0)
 
 javac -encoding UTF-8 -cp "$JAVAFX_LIB/*" -d "$CLASSES" "${SOURCES[@]}"
-cp "$ROOT/src/resources/style.css" "$CLASSES/style.css"
+cp -R "$ROOT/src/main/resources/." "$CLASSES/"
 
-jar --create --file "$JAR_PATH" --main-class Main -C "$CLASSES" .
+jar --create --file "$JAR_PATH" --main-class br.com.ryan.trabalhoeletrico.Main -C "$CLASSES" .
 
 jpackage \
     --type app-image \
-    --name CalculadoraCargas \
+    --name CalculadoraTrabalhoEletrico \
     --app-version 1.0.0 \
     --vendor "Projeto Universitario" \
     --input "$PACKAGE_INPUT" \
-    --main-jar "calculadora-cargas-eletricas.jar" \
-    --main-class Main \
+    --main-jar "calculadora-trabalho-eletrico.jar" \
+    --main-class br.com.ryan.trabalhoeletrico.Main \
     --module-path "$JAVAFX_LIB" \
     --add-modules javafx.controls \
     --dest "$DIST"
@@ -65,16 +65,16 @@ for native_target in "$APP_FOLDER/lib/runtime/lib" "$APP_FOLDER/runtime/lib"; do
     fi
 done
 
-cat > "$APP_FOLDER/Abrir CalculadoraCargas.sh" <<'LAUNCHER'
+cat > "$APP_FOLDER/Abrir CalculadoraTrabalhoEletrico.sh" <<'LAUNCHER'
 #!/usr/bin/env bash
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec "$APP_DIR/bin/CalculadoraCargas"
+exec "$APP_DIR/bin/CalculadoraTrabalhoEletrico"
 LAUNCHER
 
-chmod +x "$APP_FOLDER/Abrir CalculadoraCargas.sh"
+chmod +x "$APP_FOLDER/Abrir CalculadoraTrabalhoEletrico.sh"
 
-tar -czf "$TAR_PATH" -C "$DIST" CalculadoraCargas
+tar -czf "$TAR_PATH" -C "$DIST" CalculadoraTrabalhoEletrico
 
 echo "App Linux criado em: $APP_FOLDER"
-echo "Launcher criado em: $APP_FOLDER/Abrir CalculadoraCargas.sh"
+echo "Launcher criado em: $APP_FOLDER/Abrir CalculadoraTrabalhoEletrico.sh"
 echo "Pacote Linux criado em: $TAR_PATH"
