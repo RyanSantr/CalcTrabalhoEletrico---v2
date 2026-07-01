@@ -28,7 +28,6 @@ O pacote ja inclui JavaFX e runtime no `dist`, entao nao precisa baixar dependen
 
 ## Melhorias visuais e interativas
 
-- sprite antigo da personagem Luna com zoom no busto, posicionado abaixo do painel de entradas;
 - animacao de faiscas eletricas ao clicar na personagem;
 - fundo animado com ondas continuas por seno, sem quebras no loop;
 - relogio da barra superior usa o horario real do computador;
