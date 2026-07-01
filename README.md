@@ -18,8 +18,26 @@ dist/CalculadoraTrabalhoEletrico/CalculadoraTrabalhoEletrico.exe
 
 O pacote ja inclui JavaFX e runtime no `dist`, entao nao precisa baixar dependencias para executar.
 
+## Prints da interface
+
+### Tela principal
+
+![Tela principal da calculadora](screenshots/tela-principal.png)
+
+### Logica do calculo
+
+![Print da logica de calculo](screenshots/print-logica-calculo.png)
+
+### Tratamento de entrada
+
+![Print do tratamento de entrada](screenshots/print-tratamento-entrada.png)
+
 ## Melhorias visuais e interativas
 
+- sprite antigo da personagem Luna com zoom no busto, posicionado abaixo do painel de entradas;
+- animacao de faiscas eletricas ao clicar na personagem;
+- fundo animado com ondas continuas por seno, sem quebras no loop;
+- relogio da barra superior usa o horario real do computador;
 - efeito sonoro curto ao clicar em `Calcular`;
 - botao `Limpar` limpa campos, conversoes, substituicao e resultado.
 

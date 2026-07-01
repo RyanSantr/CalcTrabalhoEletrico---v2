@@ -14,6 +14,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -34,6 +35,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -80,6 +82,8 @@ public class Main extends Application {
     private Timeline calculationAnimation;
     private Node resultBox;
     private Pane characterLayer;
+    private Pane electricSparkLayer;
+    private Timeline characterSparkAnimation;
     private AudioClip calculateSound;
 
     private final DecimalFormat inputFormat = new DecimalFormat("0.00", commaSymbols());
@@ -377,28 +381,76 @@ public class Main extends Application {
     private void addCharacter(Pane desktop) {
         characterLayer = new Pane();
         characterLayer.setPickOnBounds(false);
+        characterLayer.setLayoutX(30);
+        characterLayer.setLayoutY(708);
+        characterLayer.setPrefSize(300, 290);
 
-        ImageView girl = imageView("/assets/garota_perfil.png", 220, -1);
-        girl.setLayoutX(184);
-        girl.setLayoutY(538);
+        ImageView girl = imageView("/assets/garota.png", 222, -1);
+        girl.setViewport(new Rectangle2D(20, 0, 392, 505));
+        girl.setLayoutX(28);
+        girl.setLayoutY(0);
         makeSpriteClickable(girl, "Luna", () -> {
-            statusLabel.setText("Luna iniciou os calculos.");
+            statusLabel.setText("Luna soltou faiscas eletricas.");
             pulse(girl);
-            animateCharacterCalculation();
-        });
-
-        ImageView sparkles = imageView("/assets/brilhos.png", 92, -1);
-        sparkles.setLayoutX(148);
-        sparkles.setLayoutY(662);
-        makeSpriteClickable(sparkles, "Brilhos", () -> {
+            animateElectricSparks();
             handleCalculateClick();
-            statusLabel.setText("Energia recalculada.");
-            pulse(sparkles);
-            focusNode(resultBox, "Resultado atualizado.");
         });
 
-        characterLayer.getChildren().addAll(sparkles, girl);
+        electricSparkLayer = createElectricSparkLayer();
+
+        characterLayer.getChildren().addAll(girl, electricSparkLayer);
         desktop.getChildren().add(characterLayer);
+    }
+
+    private Pane createElectricSparkLayer() {
+        Pane sparks = new Pane();
+        sparks.setMouseTransparent(true);
+        sparks.setOpacity(0.38);
+
+        sparks.getChildren().addAll(
+                createElectricSpark(22, 32, 0.76, -22, Color.web("#0fb9ff")),
+                createElectricSpark(204, 28, 0.72, 18, Color.web("#fff36d")),
+                createElectricSpark(8, 118, 0.62, 8, Color.web("#fff36d")),
+                createElectricSpark(226, 128, 0.58, -12, Color.web("#0fb9ff")),
+                createElectricSpark(70, 222, 0.48, -28, Color.web("#fff36d")),
+                createElectricSpark(198, 220, 0.50, 24, Color.web("#0fb9ff")),
+                createElectricDot(44, 88, 4.5, Color.web("#fff36d")),
+                createElectricDot(218, 76, 4.0, Color.web("#0fb9ff")),
+                createElectricDot(20, 196, 3.6, Color.web("#0fb9ff")),
+                createElectricDot(236, 198, 3.8, Color.web("#fff36d"))
+        );
+
+        return sparks;
+    }
+
+    private Polyline createElectricSpark(double x, double y, double scale, double rotate, Color color) {
+        Polyline spark = new Polyline(
+                0, 18,
+                14, 0,
+                10, 18,
+                28, 2,
+                18, 34,
+                36, 12
+        );
+        spark.setLayoutX(x);
+        spark.setLayoutY(y);
+        spark.setScaleX(scale);
+        spark.setScaleY(scale);
+        spark.setRotate(rotate);
+        spark.setFill(null);
+        spark.setStroke(color);
+        spark.setStrokeWidth(4);
+        spark.setEffect(new DropShadow(18, color));
+        spark.getStrokeDashArray().setAll(12.0, 8.0);
+        return spark;
+    }
+
+    private Circle createElectricDot(double x, double y, double radius, Color color) {
+        Circle dot = new Circle(radius, color);
+        dot.setLayoutX(x);
+        dot.setLayoutY(y);
+        dot.setEffect(new DropShadow(16, color));
+        return dot;
     }
 
     private void addCatToCalculationsPanel(Pane panel) {
@@ -496,6 +548,69 @@ public class Main extends Application {
             node.setScaleX(1.0);
             node.setScaleY(1.0);
         });
+    }
+
+    private void animateElectricSparks() {
+        if (electricSparkLayer == null) {
+            return;
+        }
+        if (characterSparkAnimation != null) {
+            characterSparkAnimation.stop();
+        }
+
+        electricSparkLayer.toFront();
+        electricSparkLayer.setOpacity(0.35);
+        electricSparkLayer.setScaleX(1.0);
+        electricSparkLayer.setScaleY(1.0);
+        electricSparkLayer.setRotate(0);
+
+        for (Node spark : electricSparkLayer.getChildren()) {
+            if (spark instanceof Polyline line) {
+                line.setStrokeDashOffset(0);
+            }
+        }
+
+        characterSparkAnimation = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(electricSparkLayer.opacityProperty(), 0.22),
+                        new KeyValue(electricSparkLayer.scaleXProperty(), 0.96),
+                        new KeyValue(electricSparkLayer.scaleYProperty(), 0.96),
+                        new KeyValue(electricSparkLayer.rotateProperty(), -2)
+                ),
+                new KeyFrame(Duration.millis(110),
+                        new KeyValue(electricSparkLayer.opacityProperty(), 1.0),
+                        new KeyValue(electricSparkLayer.scaleXProperty(), 1.08),
+                        new KeyValue(electricSparkLayer.scaleYProperty(), 1.08),
+                        new KeyValue(electricSparkLayer.rotateProperty(), 3)
+                ),
+                new KeyFrame(Duration.millis(230),
+                        new KeyValue(electricSparkLayer.opacityProperty(), 0.18),
+                        new KeyValue(electricSparkLayer.scaleXProperty(), 1.0),
+                        new KeyValue(electricSparkLayer.scaleYProperty(), 1.0),
+                        new KeyValue(electricSparkLayer.rotateProperty(), -4)
+                ),
+                new KeyFrame(Duration.millis(360),
+                        new KeyValue(electricSparkLayer.opacityProperty(), 0.92),
+                        new KeyValue(electricSparkLayer.scaleXProperty(), 1.1),
+                        new KeyValue(electricSparkLayer.scaleYProperty(), 1.1),
+                        new KeyValue(electricSparkLayer.rotateProperty(), 4)
+                ),
+                new KeyFrame(Duration.millis(560),
+                        new KeyValue(electricSparkLayer.opacityProperty(), 0.28),
+                        new KeyValue(electricSparkLayer.scaleXProperty(), 1.02),
+                        new KeyValue(electricSparkLayer.scaleYProperty(), 1.02),
+                        new KeyValue(electricSparkLayer.rotateProperty(), 0)
+                )
+        );
+        characterSparkAnimation.setCycleCount(2);
+        characterSparkAnimation.setAutoReverse(true);
+        characterSparkAnimation.setOnFinished(e -> {
+            electricSparkLayer.setOpacity(0.38);
+            electricSparkLayer.setScaleX(1.0);
+            electricSparkLayer.setScaleY(1.0);
+            electricSparkLayer.setRotate(0);
+        });
+        characterSparkAnimation.playFromStart();
     }
 
     private void animateCharacterCalculation() {
